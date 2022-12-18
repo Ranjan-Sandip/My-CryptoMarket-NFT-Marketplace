@@ -1,12 +1,12 @@
-const Button = ({ btnName, classStyles, handleClick }) => {
-  <button
+const Button = ({ btnName, classStyles, handleClick }) => (
+  <buttton
     type="button"
-    className={`nft-gradient text-sm mining:text-lg py-2 px-6 minlg:px-8 font-poppins font-semibold text-white ${classStyles}`}
+    className={`nft-gradient text-sm minlg:text-lg py-2 px-6 minlg:py-4 minlg:px-8 font-poppins font-semibold text-white ${classStyles}`}
     onClick={handleClick}
   >
     {btnName}
-  </button>;
-};
+  </buttton>
+
+);
 
 export default Button;
-
