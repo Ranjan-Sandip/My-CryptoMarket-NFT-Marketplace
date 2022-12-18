@@ -37,22 +37,13 @@ const PaymentBodyCmp = ({ nft, nftCurrency }) => (
   </div>
 );
 
-const AssetDetails = () => {
+const NFTDetails = () => {
   const { nftCurrency, buyNft, currentAccount, isLoadingNFT } = useContext(NFTContext);
   const [nft, setNft] = useState({ image: '', itemId: '', name: '', owner: '', price: '', seller: '' });
   const [paymentModal, setPaymentModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
-  useEffect(() => {
-    // disable body scroll when navbar is open
-    if (paymentModal || successModal) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'visible';
-    }
-  }, [paymentModal, successModal]);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -69,8 +60,6 @@ const AssetDetails = () => {
     setSuccessModal(true);
   };
 
-  if (isLoading) return <Loader />;
-
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
       <div className="relative flex-1 flexCenter sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
@@ -78,7 +67,6 @@ const AssetDetails = () => {
           <Image src={nft.image || images[`nft${nft.i}`]} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
         </div>
       </div>
-
       <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">
         <div className="flex flex-row sm:flex-col">
           <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{nft.name}</h2>
@@ -132,69 +120,69 @@ const AssetDetails = () => {
       </div>
 
       {paymentModal && (
-        <Modal
-          header="Check Out"
-          body={<PaymentBodyCmp nft={nft} nftCurrency={nftCurrency} />}
-          footer={(
-            <div className="flex flex-row sm:flex-col">
-              <Button
-                btnName="Checkout"
-                btnType="primary"
-                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={checkout}
-              />
-              <Button
-                btnName="Cancel"
-                btnType="outline"
-                classStyles="rounded-lg"
-                handleClick={() => setPaymentModal(false)}
-              />
-            </div>
-          )}
-          handleClose={() => setPaymentModal(false)}
-        />
+      <Modal
+        header="Check Out"
+        body={<PaymentBodyCmp nft={nft} nftCurrency={nftCurrency} />}
+        footer={(
+          <div className="flex flex-row sm:flex-col">
+            <Button
+              btnName="Checkout"
+              btnType="primary"
+              classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+              handleClick={checkout}
+            />
+            <Button
+              btnName="Cancel"
+              btnType="outline"
+              classStyles="rounded-lg"
+              handleClick={() => setPaymentModal(false)}
+            />
+          </div>
+        )}
+        handleClose={() => setPaymentModal(false)}
+      />
       )}
 
       {isLoadingNFT && (
-        <Modal
-          header="Buying NFT..."
-          body={(
-            <div className="flexCenter flex-col text-center">
-              <div className="relative w-52 h-52">
-                <Loader />
-              </div>
+      <Modal
+        header="Buying NFT..."
+        body={(
+          <div className="flexCenter flex-col text-center">
+            <div className="relative w-52 h-52">
+              <Loader />
             </div>
+          </div>
           )}
-          handleClose={() => setSuccessModal(false)}
-        />
+        handleClose={() => setSuccessModal(false)}
+      />
       )}
 
       {successModal && (
-        <Modal
-          header="Payment Successful"
-          body={(
-            <div className="flexCenter flex-col text-center" onClick={() => setSuccessModal(false)}>
-              <div className="relative w-52 h-52">
-                <Image src={nft.image || images[`nft${nft.i}`]} objectFit="cover" layout="fill" />
-              </div>
-              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10"> You successfully purchased <span className="font-semibold">{nft.name}</span> from <span className="font-semibold">{shortenAddress(nft.seller)}</span>.</p>
+      <Modal
+        header="Payment Successful"
+        body={(
+          <div className="flexCenter flex-col text-center" onClick={() => setSuccessModal(false)}>
+            <div className="relative w-52 h-52">
+              <Image src={nft.image} objectFit="cover" layout="fill" />
             </div>
+            <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10"> You successfully purchased <span className="font-semibold">{nft.name}</span> from <span className="font-semibold">{shortenAddress(nft.seller)}</span>.</p>
+          </div>
           )}
-          footer={(
-            <div className="flexCenter flex-col">
-              <Button
-                btnName="Check it out"
-                btnType="primary"
-                classStyles="sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => router.push('/my-nfts')}
-              />
-            </div>
+        footer={(
+          <div className="flexCenter flex-col">
+            <Button
+              btnName="Check it out"
+              btnType="primary"
+              classStyles="sm:mr-0 sm:mb-5 rounded-xl"
+              handleClick={() => router.push('/my-nfts')}
+            />
+          </div>
           )}
-          handleClose={() => setSuccessModal(false)}
-        />
+        handleClose={() => setSuccessModal(false)}
+      />
       )}
+
     </div>
   );
 };
-
-export default AssetDetails;
+export default NFTDetails;
