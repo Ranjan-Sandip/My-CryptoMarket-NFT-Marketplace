@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useContext } from 'react';
 import { create as ipfsHttpClient } from 'ipfs-http-client';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
@@ -9,27 +9,17 @@ import { NFTContext } from '../context/NFTContext';
 import { Button, Input, Loader } from '../components';
 import images from '../assets';
 
-const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
-
-const CreateItem = () => {
-  const { createSale, isLoadingNFT } = useContext(NFTContext);
+const CreateNft = () => {
   const [fileUrl, setFileUrl] = useState(null);
   const { theme } = useTheme();
-
-  const uploadToInfura = async (file) => {
-    try {
-      const added = await client.add({ content: file });
-
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-
-      setFileUrl(url);
-    } catch (error) {
-      console.log('Error uploading file: ', error);
-    }
-  };
+  const [formInput, setFormInput] = useState({ price: '', name: '', description: '' });
+  const { isLoadingNFT, uploadToIPFS, createNft } = useContext(NFTContext);
+  const router = useRouter();
 
   const onDrop = useCallback(async (acceptedFile) => {
-    await uploadToInfura(acceptedFile[0]);
+    const url = await uploadToIPFS(acceptedFile[0]);
+
+    setFileUrl(url);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -38,7 +28,6 @@ const CreateItem = () => {
     maxSize: 5000000,
   });
 
-  // add tailwind classes acording to the file status
   const fileStyle = useMemo(
     () => (
       `dark:bg-nft-black-1 bg-white border dark:border-white border-nft-gray-2 flex flex-col items-center p-5 rounded-sm border-dashed  
@@ -48,28 +37,9 @@ const CreateItem = () => {
     [isDragActive, isDragReject, isDragAccept],
   );
 
-  const [formInput, updateFormInput] = useState({ price: '', name: '', description: '' });
-  const router = useRouter();
-
-  const createMarket = async () => {
-    const { name, description, price } = formInput;
-    if (!name || !description || !price || !fileUrl) return;
-    /* first, upload to IPFS */
-    const data = JSON.stringify({ name, description, image: fileUrl });
-    try {
-      const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-      await createSale(url, formInput.price);
-      router.push('/');
-    } catch (error) {
-      console.log('Error uploading file: ', error);
-    }
-  };
-
   if (isLoadingNFT) {
     return (
-      <div className="flexCenter" style={{ height: '51vh' }}>
+      <div className="flexStart min-h-screen">
         <Loader />
       </div>
     );
@@ -95,7 +65,7 @@ const CreateItem = () => {
                     height={100}
                     objectFit="contain"
                     alt="file upload"
-                    className={theme === 'light' ? 'filter invert' : undefined}
+                    className={theme === 'light' ? 'filter invert' : ''}
                   />
                 </div>
 
@@ -119,30 +89,30 @@ const CreateItem = () => {
         <Input
           inputType="input"
           title="Name"
-          placeholder="Asset Name"
-          handleClick={(e) => updateFormInput({ ...formInput, name: e.target.value })}
+          placeholder="NFT Name"
+          handleClick={(e) => setFormInput({ ...formInput, name: e.target.value })}
         />
 
         <Input
           inputType="textarea"
           title="Description"
-          placeholder="Asset Description"
-          handleClick={(e) => updateFormInput({ ...formInput, description: e.target.value })}
+          placeholder="NFT Description"
+          handleClick={(e) => setFormInput({ ...formInput, description: e.target.value })}
         />
 
         <Input
           inputType="number"
           title="Price"
-          placeholder="Asset Price"
-          handleClick={(e) => updateFormInput({ ...formInput, price: e.target.value })}
+          placeholder="NFT Price"
+          handleClick={(e) => setFormInput({ ...formInput, price: e.target.value })}
         />
 
         <div className="mt-7 w-full flex justify-end">
           <Button
-            btnName="Create Item"
+            btnName="Create NFT"
             btnType="primary"
             classStyles="rounded-xl"
-            handleClick={createMarket}
+            handleClick={() => CreateNft(formInput, fileUrl, router)}
           />
         </div>
       </div>
@@ -150,4 +120,4 @@ const CreateItem = () => {
   );
 };
 
-export default CreateItem;
+export default CreateNft;
