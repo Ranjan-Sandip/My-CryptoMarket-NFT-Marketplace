@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { NFTContext } from '../context/NFTContext';
 import { Loader, NFTCard } from '../components';
 
-const CreatorDashboard = () => {
+const ListedNFTs = () => {
   const { fetchMyNFTsOrCreatedNFTs } = useContext(NFTContext);
   const [nfts, setNfts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,4 +46,4 @@ const CreatorDashboard = () => {
   );
 };
 
-export default CreatorDashboard;
+export default ListedNFTs;
