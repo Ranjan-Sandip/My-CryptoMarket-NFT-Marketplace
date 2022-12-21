@@ -1,2 +1,2 @@
 ## NFT Marketplace built with Polygon, Solidity, IPFS, & Next.js
-![NFT Marketplace](https://i.ibb.co/K2FjvH3/Home.png)
+![Web capture_19-12-2022_102722_localhost](https://user-images.githubusercontent.com/78637601/208822563-d509e4ce-b12e-4c7f-a24b-9bf124f28564.jpeg)
